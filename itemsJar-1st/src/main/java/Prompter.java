@@ -8,10 +8,9 @@ public class Prompter{
 
 
   public boolean invalidInput( String nameItem){
-  return nameItem.equals(null) || nameItem.isEmpty();   
+    return nameItem.equals(null) || nameItem.isEmpty();   
   }
   
-
   public int getCounter(){
     return counter;
   }
@@ -28,7 +27,7 @@ public class Prompter{
       }while(invalidInput(userAnswer));
   
       return userAnswer;
-  }
+   }
 
   public void showMessage(String message){
     System.out.printf(message);
@@ -63,15 +62,18 @@ public int guessMaxNumber(int randomAmounItems){
       Scanner scanner = new Scanner(System.in);
       userAnswer = scanner.nextInt();
       counter++;
+      if (userAnswer < 1){
+        System.out.println("Your guess must be greater than 1. Try again.");
+      }
       if (userAnswer < randomAmounItems){
-        System.out.println("Your guess is too low!.Try again.");
+        System.out.println("Your guess is too low!.");
       }else if(userAnswer > randomAmounItems){
         System.out.println("Your guess is too high!.");
       }
       if(userAnswer > Integer.parseInt(maxItems)){
-        System.out.println("Your guess must be less than " + maxItems+". Try again.");
+         System.out.println("Your guessed number must be less than " + maxItems+". Try again.");
       }
-   
+
    }while(userAnswer!=randomAmounItems);
 
     return userAnswer;
@@ -84,8 +86,8 @@ public int guessMaxNumber(int randomAmounItems){
     keyboard.nextLine();
   }
   
-public void showResults(int userCorrectAnswer,String nameItemJar){
-    System.out.printf("%n Congratulations-You guessed that there are %d %s in the jar!.It took %d guess(es) to get it right. %n",userCorrectAnswer,nameItemJar,getCounter());
+  public void showResults(int userCorrectAnswer,String nameItemJar){
+     System.out.printf("%n Congratulations-You guessed that there are %d %s in the jar!.It took %d guess(es) to get it right. %n",userCorrectAnswer,nameItemJar,getCounter());
   }
 
 }

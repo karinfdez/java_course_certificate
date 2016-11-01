@@ -27,7 +27,7 @@ public class Jar{
     Random random = new Random();
     int rightAmountItems=MINIMUM + random.nextInt(mMaxNumber - MINIMUM + 1);
     
-  return rightAmountItems;
+    return rightAmountItems;
   }
 
 }
