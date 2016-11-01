@@ -8,8 +8,9 @@ public class Prompter{
 
 
   public boolean invalidInput( String nameItem){
-    return nameItem.equals(null) || nameItem.isEmpty();   
+  return nameItem.equals(null) || nameItem.isEmpty();   
   }
+  
 
   public int getCounter(){
     return counter;
@@ -41,7 +42,13 @@ public class Prompter{
   }
 
   public int promptMaxNumber(){
-    maxItems=promptUser("Maximum number of " + nameItem + " in the jar:");
+    do{
+        maxItems=promptUser("Maximum number of " + nameItem + " in the jar:");
+        if(Integer.parseInt(maxItems)<=1){
+            System.out.printf("Maximum number of items can't be less or equal to 1.Try again.%n");
+         }
+    }while(Integer.parseInt(maxItems)<=1);
+
     showMessage(" %n Player %n ========%n Your goal is to guess how many "+ nameItem + " are in the jar. Your guess should be between 1 and " + maxItems +". %n");
     hitEnter();
     return Integer.parseInt(maxItems);
@@ -75,6 +82,10 @@ public int guessMaxNumber(int randomAmounItems){
     System.out.println("Ready? (Press enter to start guessing)");
     Scanner keyboard = new Scanner(System.in);
     keyboard.nextLine();
+  }
+  
+public void showResults(int userCorrectAnswer,String nameItemJar){
+    System.out.printf("%n Congratulations-You guessed that there are %d %s in the jar!.It took %d guess(es) to get it right. %n",userCorrectAnswer,nameItemJar,getCounter());
   }
 
 }
