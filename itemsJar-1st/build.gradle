@@ -1,0 +1,30 @@
+group 'com.teamtreehouse'
+version '2.1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    scanForTestClasses = false
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
+    testLogging {
+        exceptionFormat = 'full'
+        stackTraceFilters = ['ENTRY_POINT']
+    }
+}
+
+
+dependencies {
+    testCompile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+    testCompile "org.powermock:powermock-api-mockito:1.6.5"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
