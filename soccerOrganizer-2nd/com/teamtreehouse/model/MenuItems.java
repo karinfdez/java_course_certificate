@@ -1,11 +1,12 @@
 package com.teamtreehouse.model;
+import com.teamtreehouse.model.Team;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.util.HashMap; 
 import java.util.Map;
-import java.util.HashMap;  
 
   
 public class MenuItems{
@@ -22,11 +23,10 @@ public class MenuItems{
      mMenuItemsList.put(1,mOption1);
      mMenuItemsList.put(2,mOption2);
      mMenuItemsList.put(3,mOption3);
-     mReader=new BufferedReader(new InputStreamReader(System.in));
-     
+     mReader=new BufferedReader(new InputStreamReader(System.in));  
   }
   
-  public  String promptToAction() throws IOException{
+  public String promptToAction() throws IOException{
     
     System.out.println("Choose a number to execute an action or type 'quit' to stop:" ) ;
     
@@ -57,12 +57,48 @@ public class MenuItems{
     
     
   }
+  
+   public String promptNewTeam(String option) throws IOException{
+    String userInput="";
+     do{
+      
+       System.out.println("Please enter the "+ option);
+       userInput=mReader.readLine();
+     
+      }while(userInput==null || userInput.isEmpty());
+      
+     return userInput;
+   }
+  
+  public Team createNewTeam() throws IOException{
+     
+      String team="";
+      String coach="";
+          
+      try{
+            team=promptNewTeam("team name");
+            coach=promptNewTeam("coach");
+            
+          }catch(IOException ioe){
+            System.out.println("Incorrect input");
+            ioe.printStackTrace();
+          }
+      
+      return new Team(team,coach);
+      
+   }
+             
                                                     
    public void switchUserInput(String userChoice){
-   
-      switch (userChoice){
-        case "1":  System.out.println("Option1");
-                   break;
+     Team myTeam=new Team("name","otherName");
+      
+     switch (userChoice){
+        case "1":  try{
+                        myTeam=createNewTeam();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    break;
         case "2":  System.out.println("Option2");
                    break;
         case "3":  System.out.println("Option3");
@@ -72,7 +108,6 @@ public class MenuItems{
         default: System.out.println("Incorrect answer");
       }  
    }
-  
 }
 
 
