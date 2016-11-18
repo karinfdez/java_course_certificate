@@ -1,11 +1,14 @@
 package com.teamtreehouse.model;
+import com.teamtreehouse.model.Players;
 import com.teamtreehouse.model.Team;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.util.ArrayList; 
 import java.util.HashMap; 
+import java.util.List;
 import java.util.Map;
 
   
@@ -16,6 +19,8 @@ public class MenuItems{
   private String  mOption3="Remove players from team";
   Map<Integer,String> mMenuItemsList;
   private BufferedReader mReader;
+  Player[] mPlayers = Players.load();
+  private List mTeamList=new ArrayList();
   
   
   public MenuItems(){
@@ -59,22 +64,23 @@ public class MenuItems{
   }
   
    public String promptNewTeam(String option) throws IOException{
-    String userInput="";
-     do{
-      
-       System.out.println("Please enter the "+ option);
-       userInput=mReader.readLine();
-     
-      }while(userInput==null || userInput.isEmpty());
-      
-     return userInput;
-   }
+      String userInput="";
+       do{
+        
+         System.out.println("Please enter the "+ option);
+         userInput=mReader.readLine();
+       
+        }while(userInput==null || userInput.isEmpty());
+        
+       return userInput;
+    }
   
-  public Team createNewTeam() throws IOException{
+  public void createNewTeam() throws IOException{
      
       String team="";
       String coach="";
-          
+    //Check that no more teams are created than there are players
+    if(mTeamList.size()< mPlayers.length){
       try{
             team=promptNewTeam("team name");
             coach=promptNewTeam("coach");
@@ -83,10 +89,12 @@ public class MenuItems{
             System.out.println("Incorrect input");
             ioe.printStackTrace();
           }
-      
-      return new Team(team,coach);
-      
-   }
+         mTeamList.add(new Team(team,coach));
+    }else{
+        System.out.printf("You exceed the limit for creating teams.There are %d teams and %d players already %n",mTeamList.size(),mPlayers.length);
+       
+      }
+  }
              
                                                     
    public void switchUserInput(String userChoice){
@@ -94,7 +102,7 @@ public class MenuItems{
       
      switch (userChoice){
         case "1":  try{
-                        myTeam=createNewTeam();
+                      createNewTeam();
                     }catch(IOException e){
                         e.printStackTrace();
                     }

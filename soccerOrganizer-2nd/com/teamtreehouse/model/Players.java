@@ -6,7 +6,7 @@ public class Players {
     return new Player[] {
       new Player("Joe", "Smith", 42, true),
       new Player("Jill", "Tanner", 36, true),
-      new Player("Bill", "Bon", 43, true),
+     /* new Player("Bill", "Bon", 43, true),
       new Player("Eva", "Gordon", 45, false),
       new Player("Matt", "Gill", 40, false),
       new Player("Kimmy", "Stein", 41, false),
@@ -36,7 +36,7 @@ public class Players {
       new Player("Will", "Guyam", 44, false),
       new Player("Jason", "Seaver", 41, true),
       new Player("Johnny", "Thunder", 47, false),
-      new Player("Ryan", "Creedson", 43, false)
+      new Player("Ryan", "Creedson", 43, false)*/
     };
 
   }
