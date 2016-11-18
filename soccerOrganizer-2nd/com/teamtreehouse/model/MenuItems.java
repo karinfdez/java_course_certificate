@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap; 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
   
 public class MenuItems{
@@ -75,6 +77,7 @@ public class MenuItems{
        return userInput;
     }
   
+  
   public void createNewTeam() throws IOException{
      
       String team="";
@@ -95,6 +98,19 @@ public class MenuItems{
        
       }
   }
+  
+  public void addPlayers(){
+    int counter=1;
+    if(mTeamList.size()>0){
+      System.out.println("Select team to add player: ");
+      for(Team team : (ArrayList<Team>) mTeamList){
+        System.out.printf("%d. %s %n",counter,team.getTeamName());
+        counter++;
+      }
+    }else{
+      System.out.printf("You have to create at least 1 team first to add players to it.%n%n");
+    }
+  }
              
                                                     
    public void switchUserInput(String userChoice){
@@ -107,7 +123,7 @@ public class MenuItems{
                         e.printStackTrace();
                     }
                     break;
-        case "2":  System.out.println("Option2");
+        case "2":  addPlayers();
                    break;
         case "3":  System.out.println("Option3");
                    break;
