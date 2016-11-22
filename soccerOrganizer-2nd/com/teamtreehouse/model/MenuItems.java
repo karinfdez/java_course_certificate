@@ -24,6 +24,7 @@ public class MenuItems{
   Player[] mPlayers = Players.load();
   Map <Integer,Team> mTeamList;
   Map <Integer,String> mListPlayer;
+  public static final int MAX_PLAYERS = 12;
   
   
   public MenuItems(){
@@ -148,6 +149,8 @@ public class MenuItems{
     String fullName="";
     int numberTeam=0;
     int counter=1;
+    boolean isListFull=false;
+      
     for(int i=0;i< mPlayers.length;i++){
         fullName=mPlayers[i].getFirstName() +" "+ mPlayers[i].getLastName();
         mListPlayer.put(counter,fullName);
@@ -159,17 +162,22 @@ public class MenuItems{
         System.out.println(key + "." + mListPlayer.get(key));
       }
       numberTeam=catchUserInput(numberTeam);
+      Team team= mTeamList.get(numberTeam);
+      isListFull=team.getPlayers().size()<MAX_PLAYERS;
+       if(isListFull){
+        team.addPlayer(mListPlayer.get(numberTeam));
+       }else{
+        System.out.printf("There are already %d players on the team",team.getPlayers().size());
+       }
+       System.out.println("Players of "+team.getTeamName());
+       Set<String> teamList=team.getPlayers();
+       for(String player: teamList){
+        System.out.println(player);
+       }
       
      }while(!mListPlayer.containsKey(numberTeam));
       
-     Team team= mTeamList.get(numberTeam);
-     team.addPlayer(mListPlayer.get(numberTeam));
-    
-     System.out.println("Players of "+team.getTeamName())
-     Set<String> teamList=team.getPlayers();
-     for(String player: teamList){
-      System.out.println(player);
-     }
+     
    
   }
   
