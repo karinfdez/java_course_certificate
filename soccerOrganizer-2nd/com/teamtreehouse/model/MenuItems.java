@@ -105,6 +105,12 @@ public class MenuItems{
       }
   }
   
+  public void showListOfteams(){
+    for(Map.Entry<Integer, Team> entry : mTeamList.entrySet()){ 
+          System.out.printf("%d. %s %n", entry.getKey(),entry.getValue().getTeamName()); 
+    }
+
+  }
   public void addPlayers() throws IOException{
     String userChoice="";
     int numberTeam=0;
@@ -116,10 +122,7 @@ public class MenuItems{
 //         for(int item: mTeamList.keySet()){
 //           System.out.println(item +"."+mTeamList.get(item).getTeamName());
 //         }
-        for(Map.Entry<Integer, Team> entry : mTeamList.entrySet()){ 
-          System.out.printf("%d. %s %n", entry.getKey(),entry.getValue().getTeamName()); 
-        }
-
+        showListOfteams();
         numberTeam=catchUserInput(numberTeam);
         
         }while(!mTeamList.containsKey(numberTeam));
@@ -174,10 +177,22 @@ public class MenuItems{
        for(String player: teamList){
         System.out.println(player);
        }
-      
      }while(!mListPlayer.containsKey(numberTeam));
-      
      
+  }
+  
+  public void removePlayersFromTeam() throws IOException{
+    int numberTeam=0;
+    do{
+         showListOfteams();
+         System.out.println("Select the number associated to the team from which you would like to remove player(s)");
+         numberTeam=catchUserInput(numberTeam);
+         Team team= mTeamList.get(numberTeam);
+         if(team.getPlayers().size()<=0){
+          System.out.println("There are not players added to this team");
+         }
+        }while(!mTeamList.containsKey(numberTeam));
+        System.out.printf("you are inside of %s",mTeamList.get(numberTeam));
    
   }
   
@@ -198,8 +213,12 @@ public class MenuItems{
                      e.printStackTrace();
                    }
                    break;
-        case "3":  System.out.println("Option3");
-                   break;
+        case "3":  try{
+                    removePlayersFromTeam();
+                   }catch(IOException e){
+                    e.printStackTrace();
+                   }
+                    break;
         case "quit": System.out.println("Thanks for playing");
                      break;
         default: System.out.println("Incorrect answer");
