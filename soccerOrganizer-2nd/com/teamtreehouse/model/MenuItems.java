@@ -22,7 +22,8 @@ public class MenuItems{
   Map<Integer,String> mMenuItemsList;
   private BufferedReader mReader;
   Player[] mPlayers = Players.load();
-  private List mTeamList=new ArrayList();
+  Map <Integer,Team> mTeamList;
+  Map <Integer,String> mListPlayer;
   
   
   public MenuItems(){
@@ -30,7 +31,9 @@ public class MenuItems{
      mMenuItemsList.put(1,mOption1);
      mMenuItemsList.put(2,mOption2);
      mMenuItemsList.put(3,mOption3);
-     mReader=new BufferedReader(new InputStreamReader(System.in));  
+     mReader=new BufferedReader(new InputStreamReader(System.in));
+     mTeamList=new HashMap<>();
+     mListPlayer=new HashMap<>();
   }
   
   public String promptToAction() throws IOException{
@@ -62,8 +65,8 @@ public class MenuItems{
         }
     }while(!userChoice.toLowerCase().equals("quit"));
     
-    
   }
+  
   
    public String promptNewTeam(String option) throws IOException{
       String userInput="";
@@ -82,6 +85,7 @@ public class MenuItems{
      
       String team="";
       String coach="";
+      int counter=1;
     //Check that no more teams are created than there are players
     if(mTeamList.size()< mPlayers.length){
       try{
@@ -92,27 +96,84 @@ public class MenuItems{
             System.out.println("Incorrect input");
             ioe.printStackTrace();
           }
-         mTeamList.add(new Team(team,coach));
+         mTeamList.put(counter,new Team(team,coach));
+         counter++;
     }else{
         System.out.printf("You exceed the limit for creating teams.There are %d teams and %d players already %n",mTeamList.size(),mPlayers.length);
        
       }
   }
   
-  public void addPlayers(){
-    int counter=1;
+  public void addPlayers() throws IOException{
+    String userChoice="";
+    int numberTeam=0;
+    
     if(mTeamList.size()>0){
-      System.out.println("Select team to add player: ");
-      for(Team team : (ArrayList<Team>) mTeamList){
-        System.out.printf("%d. %s %n",counter,team.getTeamName());
-        counter++;
-      }
+      do{
+         System.out.println("Select number related to the team in order to add a player: ");
+       
+//         for(int item: mTeamList.keySet()){
+//           System.out.println(item +"."+mTeamList.get(item).getTeamName());
+//         }
+        for(Map.Entry<Integer, Team> entry : mTeamList.entrySet()){ 
+          System.out.printf("%d. %s %n", entry.getKey(),entry.getValue().getTeamName()); 
+        }
+
+        numberTeam=catchUserInput(numberTeam);
+        
+        }while(!mTeamList.containsKey(numberTeam));
+        
+         addPlayersToTeam();
+
     }else{
-      System.out.printf("You have to create at least 1 team first to add players to it.%n%n");
+         System.out.printf("You have to create at least 1 team first to add players to it.%n%n"); 
     }
+      
+  }
+  
+  
+  public int catchUserInput(int numberTeam) throws IOException{
+    
+     try {
+            numberTeam = Integer.parseInt(mReader.readLine());
+          } catch(NumberFormatException e) {
+               System.out.println("This is not a number");
+               System.out.println(e.getMessage());
+          }
+     return numberTeam;
   }
              
-                                                    
+   
+  public void addPlayersToTeam() throws IOException{
+    String fullName="";
+    int numberTeam=0;
+    int counter=1;
+    for(int i=0;i< mPlayers.length;i++){
+        fullName=mPlayers[i].getFirstName() +" "+ mPlayers[i].getLastName();
+        mListPlayer.put(counter,fullName);
+    }
+    do{
+     System.out.println("Please, add players to team typing the number associated with the player. Maximum 11 players/team");
+   
+      for(int key: mListPlayer.keySet()){
+        System.out.println(key + "." + mListPlayer.get(key));
+      }
+      numberTeam=catchUserInput(numberTeam);
+      
+     }while(!mListPlayer.containsKey(numberTeam));
+      
+     Team team= mTeamList.get(numberTeam);
+     team.addPlayer(mListPlayer.get(numberTeam));
+    
+     System.out.println("Players of "+team.getTeamName())
+     Set<String> teamList=team.getPlayers();
+     for(String player: teamList){
+      System.out.println(player);
+     }
+   
+  }
+  
+  
    public void switchUserInput(String userChoice){
      Team myTeam=new Team("name","otherName");
       
@@ -123,7 +184,11 @@ public class MenuItems{
                         e.printStackTrace();
                     }
                     break;
-        case "2":  addPlayers();
+        case "2":  try{
+                     addPlayers();
+                   }catch(IOException e){
+                     e.printStackTrace();
+                   }
                    break;
         case "3":  System.out.println("Option3");
                    break;

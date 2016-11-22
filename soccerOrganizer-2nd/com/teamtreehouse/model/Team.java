@@ -36,5 +36,9 @@ public class Team{
     return mCoach;
   }
   
+  public Set<String> getPlayers(){
+    return mListPlayers;
+  }
+  
   
 }
