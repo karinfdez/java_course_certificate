@@ -7,7 +7,7 @@ public class Team implements Comparable{
   
   private String mTeamName;
   private String mCoach;
-  private Set <String> mListPlayers;
+  private Set <Player> mListPlayers;
   
   
   public Team(String teamName,String coach){
@@ -20,7 +20,7 @@ public class Team implements Comparable{
     mTeamName=name;
   }
   
-  public void addPlayer(String player){
+  public void addPlayer(Player player){
     mListPlayers.add(player);
   }
   
@@ -36,7 +36,7 @@ public class Team implements Comparable{
     return mCoach;
   }
   
-  public Set<String> getPlayers(){
+  public Set<Player> getPlayers(){
     return mListPlayers;
   }
   
