@@ -3,7 +3,7 @@ package com.teamtreehouse.model;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Team{
+public class Team implements Comparable{
   
   private String mTeamName;
   private String mCoach;
@@ -40,5 +40,14 @@ public class Team{
     return mListPlayers;
   }
   
+  @Override
+  public int compareTo(Object obj) {
+		 Team other=(Team) obj;
+     if(equals(other)){
+      return 0;
+     }
+     return mTeamName.compareTo(other.mTeamName);
+
+	}
   
 }

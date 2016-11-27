@@ -6,8 +6,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.util.Arrays;
 import java.util.ArrayList; 
 import java.util.HashMap; 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +26,7 @@ public class MenuItems{
   Player[] mPlayers = Players.load();
   Map <Integer,Team> mTeamList;
   Map <Integer,String> mListPlayer;
-  public static final int MAX_PLAYERS = 12;
+  public static final int MAX_PLAYERS = 11;
   
   
   public MenuItems(){
@@ -86,7 +88,7 @@ public class MenuItems{
      
       String team="";
       String coach="";
-      int counter=1;
+      
     //Check that no more teams are created than there are players
     if(mTeamList.size()< mPlayers.length){
       try{
@@ -97,8 +99,7 @@ public class MenuItems{
             System.out.println("Incorrect input");
             ioe.printStackTrace();
           }
-         mTeamList.put(counter,new Team(team,coach));
-         counter++;
+         mTeamList.put(mTeamList.size()+1,new Team(team,coach));
     }else{
         System.out.printf("You exceed the limit for creating teams.There are %d teams and %d players already %n",mTeamList.size(),mPlayers.length);
        
@@ -106,28 +107,26 @@ public class MenuItems{
   }
   
   public void showListOfteams(){
-    for(Map.Entry<Integer, Team> entry : mTeamList.entrySet()){ 
-          System.out.printf("%d. %s %n", entry.getKey(),entry.getValue().getTeamName()); 
+    for(int number: mTeamList.keySet()){
+      System.out.printf("%d. %s %n",number,mTeamList.get(number).getTeamName());
     }
-
   }
+  
   public void addPlayers() throws IOException{
     String userChoice="";
     int numberTeam=0;
     
     if(mTeamList.size()>0){
       do{
-         System.out.println("Select number related to the team in order to add a player: ");
-       
-//         for(int item: mTeamList.keySet()){
-//           System.out.println(item +"."+mTeamList.get(item).getTeamName());
-//         }
+        System.out.println("Select number related to the team in order to add a player: ");
         showListOfteams();
-        numberTeam=catchUserInput(numberTeam);
+        numberTeam=catchUserInput();
         
         }while(!mTeamList.containsKey(numberTeam));
         
-         addPlayersToTeam();
+         Set listPlayers=addPlayersToTeam(numberTeam);
+         System.out.println("List of added players:");
+         listPlayers.forEach(System.out::println); 
 
     }else{
          System.out.printf("You have to create at least 1 team first to add players to it.%n%n"); 
@@ -136,8 +135,9 @@ public class MenuItems{
   }
   
   
-  public int catchUserInput(int numberTeam) throws IOException{
+  public int catchUserInput() throws IOException{
     
+    int numberTeam=0;
      try {
             numberTeam = Integer.parseInt(mReader.readLine());
           } catch(NumberFormatException e) {
@@ -148,50 +148,51 @@ public class MenuItems{
   }
              
    
-  public void addPlayersToTeam() throws IOException{
+  public Set<String> addPlayersToTeam(int numberTeam) throws IOException{
     String fullName="";
-    int numberTeam=0;
-    int counter=1;
-    boolean isListFull=false;
+    int numberPlayer=0;
+    boolean isListOk=false;
+    Set<String> playerList;
       
-    for(int i=0;i< mPlayers.length;i++){
-        fullName=mPlayers[i].getFirstName() +" "+ mPlayers[i].getLastName();
-        mListPlayer.put(counter,fullName);
-    }
+    //sort array by last name and then by first name
+    Arrays.sort(mPlayers);
+    System.out.println("Size of list: "+mListPlayer.size());
     do{
-     System.out.println("Please, add players to team typing the number associated with the player. Maximum 11 players/team");
+      System.out.println("Please, add players to team typing the number associated with the player. Maximum 11 players/team");
    
-      for(int key: mListPlayer.keySet()){
-        System.out.println(key + "." + mListPlayer.get(key));
+      for(Player player: mPlayers){
+        System.out.printf("%s, %s heightInInches: %d %n",player.getLastName(),player.getFirstName(),player.getHeightInInches());
       }
-      numberTeam=catchUserInput(numberTeam);
-      Team team= mTeamList.get(numberTeam);
-      isListFull=team.getPlayers().size()<MAX_PLAYERS;
-       if(isListFull){
-        team.addPlayer(mListPlayer.get(numberTeam));
+      numberPlayer=catchUserInput();
+     }while(!mListPlayer.containsKey(numberPlayer));
+    
+      Team team=mTeamList.get(numberTeam);
+      isListOk=team.getPlayers().size()<MAX_PLAYERS;
+       if(isListOk){
+        String player=mListPlayer.get(numberPlayer);
+        team.addPlayer(player);
        }else{
         System.out.printf("There are already %d players on the team",team.getPlayers().size());
        }
        System.out.println("Players of "+team.getTeamName());
-       Set<String> teamList=team.getPlayers();
-       for(String player: teamList){
-        System.out.println(player);
-       }
-     }while(!mListPlayer.containsKey(numberTeam));
+       playerList=team.getPlayers();
+      
      
+    return playerList;
   }
+  
   
   public void removePlayersFromTeam() throws IOException{
     int numberTeam=0;
     do{
-         showListOfteams();
+         
          System.out.println("Select the number associated to the team from which you would like to remove player(s)");
-         numberTeam=catchUserInput(numberTeam);
+         //numberTeam=catchUserInput(numberTeam);
          Team team= mTeamList.get(numberTeam);
          if(team.getPlayers().size()<=0){
           System.out.println("There are not players added to this team");
          }
-        }while(!mTeamList.containsKey(numberTeam));
+       }while(!mTeamList.containsKey(numberTeam));
         System.out.printf("you are inside of %s",mTeamList.get(numberTeam));
    
   }
