@@ -1,19 +1,21 @@
 package com.teamtreehouse.model;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Team implements Comparable{
   
   private String mTeamName;
   private String mCoach;
-  private Set <Player> mListPlayers;
+  private Map <Integer, Player> mListPlayers;
   
   
   public Team(String teamName,String coach){
     mTeamName=teamName;
     mCoach=coach;
-    mListPlayers= new TreeSet<>();
+    mListPlayers= new TreeMap<>();
   }
   
   public void setTeamName(String name){
@@ -21,7 +23,7 @@ public class Team implements Comparable{
   }
   
   public void addPlayer(Player player){
-    mListPlayers.add(player);
+    mListPlayers.put(mListPlayers.size()+1,player);
   }
   
   public void setCoach(String coach){
@@ -36,7 +38,7 @@ public class Team implements Comparable{
     return mCoach;
   }
   
-  public Set<Player> getPlayers(){
+  public Map <Integer, Player> getPlayers(){
     return mListPlayers;
   }
   

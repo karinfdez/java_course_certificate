@@ -103,9 +103,11 @@ public class MenuItems{
           }
          mTeam.add(new Team(team,coach));
          
+         
     }else{
         System.out.printf("You exceed the limit for creating teams.There are %d teams and %d players already %n",mTeamList.size(),mPlayers.length);
       }
+    
   }
   
   public void showListOfteams(){
@@ -114,12 +116,19 @@ public class MenuItems{
     }
   }
   
+  public void addOrderListToTeamList(){
+    
+    for(Team theTeam: mTeam){
+      if(!mTeamList.containsValue(theTeam.getTeamName())){
+        mTeamList.put(mTeamList.size()+1,theTeam);
+      }
+    }
+  }
+  
   public void addPlayers() throws IOException{
     String userChoice="";
     int numberTeam=0;
-    for(Team theTeam: mTeam){
-      mTeamList.put(mTeamList.size()+1,theTeam);
-    }
+    addOrderListToTeamList();
     if(mTeamList.size()>0){
       do{
         System.out.println("Select number related to the team in order to add a player: ");
@@ -129,7 +138,7 @@ public class MenuItems{
         }while(!mTeamList.containsKey(numberTeam));
       
          System.out.println("List of added players:");
-         for(Player player: addPlayersToTeam(numberTeam)){
+         for(Player player: addPlayersToTeam(numberTeam).values()){
           System.out.printf("%s, %s %n",player.getLastName(),player.getFirstName());
          }
 
@@ -153,7 +162,7 @@ public class MenuItems{
   }
              
    
-  public Set<Player> addPlayersToTeam(int numberTeam) throws IOException{
+  public Map<Integer,Player> addPlayersToTeam(int numberTeam) throws IOException{
     String fullName="";
     int numberPlayer=0;
     boolean isListOk=false;
@@ -183,23 +192,42 @@ public class MenuItems{
        }else{
         System.out.printf("There are already %d players on the team",team.getPlayers().size());
        }
-       
-      
-    return team.getPlayers();
+       return team.getPlayers();
   }
   
   
   public void removePlayersFromTeam() throws IOException{
     int numberTeam=0;
-    do{
-         
+    Team team= mTeamList.get(numberTeam);
+    addOrderListToTeamList();
+    if(mTeamList.size()>0){
+        do{
          System.out.println("Select the number associated to the team from which you would like to remove player(s)");
-         Team team= mTeamList.get(numberTeam);
-         if(team.getPlayers().size()<=0){
-          System.out.println("There are not players added to this team");
-         }
+          showListOfteams();
+         numberTeam= catchUserInput();
        }while(!mTeamList.containsKey(numberTeam));
-        System.out.printf("you are inside of %s",mTeamList.get(numberTeam));
+      
+        Team theTeam=mTeamList.get(numberTeam);
+        
+        if(theTeam.getPlayers().size()>0){
+          System.out.println("Select a number to remove players from "+theTeam.getTeamName());
+         for(int number: theTeam.getPlayers().keySet()){
+          System.out.printf("%d. %s,%s %n",number,theTeam.getPlayers().get(number).getLastName(),theTeam.getPlayers().get(number).getFirstName());
+         }
+          numberTeam=catchUserInput();
+          if(theTeam.getPlayers().containsKey(numberTeam)){
+            theTeam.getPlayers().remove(numberTeam);
+            System.out.println("size of list players "+ theTeam.getPlayers().size());
+          }
+        }else{
+         System.out.printf("You have to add players to this team.%n%n"); 
+        }
+      
+
+    }else{
+         System.out.printf("You have to create at least 1 team first to add players to it.%n%n"); 
+    }
+    
    
   }
   
@@ -230,8 +258,5 @@ public class MenuItems{
                      break;
         default: System.out.println("Incorrect answer");
       }  
-   }
+  }
 }
-
-
-
