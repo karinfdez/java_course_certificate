@@ -21,6 +21,7 @@ public class MenuItems{
   private String mOption1="Create new team";
   private String mOption2="Add players";
   private String  mOption3="Remove players from team";
+  private String  mOption4="Show List of Players";
   Map<Integer,String> mMenuItemsList;
   private BufferedReader mReader;
   private Set<Team> mTeam;
@@ -35,6 +36,7 @@ public class MenuItems{
      mMenuItemsList.put(1,mOption1);
      mMenuItemsList.put(2,mOption2);
      mMenuItemsList.put(3,mOption3);
+     mMenuItemsList.put(4,mOption4);
      mReader=new BufferedReader(new InputStreamReader(System.in));
      mTeamList=new HashMap<>();
      mListPlayer=new HashMap<>();
@@ -231,6 +233,32 @@ public class MenuItems{
    
   }
   
+  public void printPlayers() throws IOException{
+    int numberTeam=0;
+     addOrderListToTeamList();
+    if(mTeamList.size()>0){
+       do{
+         System.out.println("Select the number associated to the team from which you would like to print the list of player(s)");
+          showListOfteams();
+          numberTeam= catchUserInput();
+          
+        }while(!mTeamList.containsKey(numberTeam));
+         Team theTeam= mTeamList.get(numberTeam);
+         if(theTeam.getPlayers().size()>0){
+           System.out.printf("List of players for %s %n",theTeam.getTeamName());
+           for(int number: theTeam.getPlayers().keySet()){
+            System.out.printf("%d. %s,%s %n",number,theTeam.getPlayers().get(number).getLastName(),theTeam.getPlayers().get(number).getFirstName());
+           }
+         }else{
+           System.out.println("There are no players for "+ theTeam.getTeamName()+ " team. Add players first.");
+         }
+    }else{
+      System.out.println("You have to create teams first and add players.");
+    }
+    
+    
+  }
+  
   
    public void switchUserInput(String userChoice){
      Team myTeam=new Team("name","otherName");
@@ -250,6 +278,12 @@ public class MenuItems{
                    break;
         case "3":  try{
                     removePlayersFromTeam();
+                   }catch(IOException e){
+                    e.printStackTrace();
+                   }
+                    break;
+        case "4":  try{
+                    printPlayers();
                    }catch(IOException e){
                     e.printStackTrace();
                    }
