@@ -22,12 +22,16 @@ public class MenuItems{
   private String mOption2="Add players";
   private String  mOption3="Remove players from team";
   private String  mOption4="Show List of Players";
+  private String  mOption5="League Balance Report";
   Map<Integer,String> mMenuItemsList;
   private BufferedReader mReader;
   private Set<Team> mTeam;
   Player[] mPlayers = Players.load();
   Map <Integer,Team> mTeamList;
   Map <Integer,Player> mListPlayer;
+  List <Integer>listExperiencePlayers;
+  Map<String,List<Integer>> listExperienceByTeams;
+  List <Integer> listCounters;
   public static final int MAX_PLAYERS = 11;
   
   
@@ -37,11 +41,16 @@ public class MenuItems{
      mMenuItemsList.put(2,mOption2);
      mMenuItemsList.put(3,mOption3);
      mMenuItemsList.put(4,mOption4);
+     mMenuItemsList.put(5,mOption5);
      mReader=new BufferedReader(new InputStreamReader(System.in));
      mTeamList=new HashMap<>();
      mListPlayer=new HashMap<>();
      mTeam=new TreeSet<>();
+     listExperiencePlayers=new ArrayList<>();
+     listExperienceByTeams=new HashMap<>();
+     listCounters= new ArrayList<>();
   }
+  
   
   public String promptToAction() throws IOException{
     
@@ -60,6 +69,12 @@ public class MenuItems{
   public void userChoice(){
     
     String userChoice="";
+    //Compare by Last Name and then by first name
+     Arrays.sort(mPlayers);
+     for(Player player: mPlayers){
+         mListPlayer.put(mListPlayer.size()+1,player);
+      }
+    
     do{
         try{
           
@@ -104,6 +119,7 @@ public class MenuItems{
             ioe.printStackTrace();
           }
          mTeam.add(new Team(team,coach));
+         addOrderListToTeamList();
          
          
     }else{
@@ -112,20 +128,22 @@ public class MenuItems{
     
   }
   
-  public void showListOfteams(){
-    for(int number: mTeamList.keySet()){
-      System.out.printf("%d. %s %n",number,mTeamList.get(number).getTeamName());
-    }
-  }
-  
   public void addOrderListToTeamList(){
-    
+    mTeamList.clear();
     for(Team theTeam: mTeam){
       if(!mTeamList.containsValue(theTeam.getTeamName())){
         mTeamList.put(mTeamList.size()+1,theTeam);
       }
     }
   }
+  
+  public void showListOfteams(){
+    for(int number: mTeamList.keySet()){
+      System.out.printf("%d. %s %n",number,mTeamList.get(number).getTeamName());
+    }
+  }
+ 
+  
   
   public void addPlayers() throws IOException{
     String userChoice="";
@@ -138,12 +156,7 @@ public class MenuItems{
         numberTeam=catchUserInput();
         
         }while(!mTeamList.containsKey(numberTeam));
-      
-         System.out.println("List of added players:");
-         for(Player player: addPlayersToTeam(numberTeam).values()){
-          System.out.printf("%s, %s %n",player.getLastName(),player.getFirstName());
-         }
-
+        addPlayersToTeam(numberTeam);
     }else{
          System.out.printf("You have to create at least 1 team first to add players to it.%n%n"); 
     }
@@ -164,44 +177,49 @@ public class MenuItems{
   }
              
    
-  public Map<Integer,Player> addPlayersToTeam(int numberTeam) throws IOException{
+  public void addPlayersToTeam(int numberTeam) throws IOException{
+    
     String fullName="";
     int numberPlayer=0;
     boolean isListOk=false;
     Set<String> playerList;
+    Team team=mTeamList.get(numberTeam);
       
-    //sort array by last name and then by first name
-    Arrays.sort(mPlayers);
-    
     do{
       System.out.println("Please, add players to team typing the number associated with the player. Maximum 11 players/team");
-   
-      for(Player player: mPlayers){
-         mListPlayer.put(mListPlayer.size()+1,player);
-      }
+      System.out.println("list size: " + mListPlayer.size());
         for(int number: mListPlayer.keySet()){
-        System.out.printf(" %d. %s, %s heightInInches: %d %n",number, mListPlayer.get(number).getLastName(),mListPlayer.get(number).getFirstName(),mListPlayer.get(number).getHeightInInches());
+        System.out.printf(" %d. %s, %s heightInInches: %d %n",number,   mListPlayer.get(number).getLastName(),mListPlayer.get(number).getFirstName(),mListPlayer.get(number).getHeightInInches());
         
         }
       numberPlayer=catchUserInput();
      }while(!mListPlayer.containsKey(numberPlayer));
     
-      Team team=mTeamList.get(numberTeam);
+    //Verify that max of players on team are 11
+    
       isListOk=team.getPlayers().size()<MAX_PLAYERS;
        if(isListOk){
         Player player=mListPlayer.get(numberPlayer);
         team.addPlayer(player);
+        System.out.printf("Added %d player(s) to %s %n",team.getPlayers().size(),team.getTeamName());
+         
+        if(player.isPreviousExperience()){
+               team.addOneToExperienceCounter();
+          }else{
+               team.addOneToInexperienceCounter();  
+          }
+         
        }else{
-        System.out.printf("There are already %d players on the team",team.getPlayers().size());
+        System.out.printf("There are already %d players on the team %n",team.getPlayers().size());
        }
-       return team.getPlayers();
+      
   }
   
   
   public void removePlayersFromTeam() throws IOException{
     int numberTeam=0;
     Team team= mTeamList.get(numberTeam);
-    addOrderListToTeamList();
+    
     if(mTeamList.size()>0){
         do{
          System.out.println("Select the number associated to the team from which you would like to remove player(s)");
@@ -219,7 +237,7 @@ public class MenuItems{
           numberTeam=catchUserInput();
           if(theTeam.getPlayers().containsKey(numberTeam)){
             theTeam.getPlayers().remove(numberTeam);
-            System.out.println("size of list players "+ theTeam.getPlayers().size());
+            System.out.printf("%n %d players left on %s %n",theTeam.getPlayers().size(),theTeam.getTeamName());
           }
         }else{
          System.out.printf("You have to add players to this team.%n%n"); 
@@ -229,7 +247,6 @@ public class MenuItems{
     }else{
          System.out.printf("You have to create at least 1 team first to add players to it.%n%n"); 
     }
-    
    
   }
   
@@ -245,7 +262,7 @@ public class MenuItems{
         }while(!mTeamList.containsKey(numberTeam));
          Team theTeam= mTeamList.get(numberTeam);
          if(theTeam.getPlayers().size()>0){
-           System.out.printf("List of players for %s %n",theTeam.getTeamName());
+           System.out.printf("%s player's list: %n",theTeam.getTeamName());
            for(int number: theTeam.getPlayers().keySet()){
             System.out.printf("%d. %s,%s %n",number,theTeam.getPlayers().get(number).getLastName(),theTeam.getPlayers().get(number).getFirstName());
            }
@@ -257,6 +274,41 @@ public class MenuItems{
     }
     
     
+  }
+  
+  public void leagueBalanceReport() throws IOException{
+    
+    int numberTeam=0;
+     
+    if(mTeamList.size()>0){
+        do{
+           System.out.println("Select the number associated to the team from which you would like to print the list of player(s)");
+            showListOfteams();
+            numberTeam= catchUserInput();
+            
+          }while(!mTeamList.containsKey(numberTeam));
+           Team theTeam= mTeamList.get(numberTeam);
+           
+          if (theTeam.getPlayers().size()>0){
+              theTeam.addCountersToList();
+              System.out.println("League Balance Report:");
+        
+            for(Team team: mTeamList.values()){
+                System.out.println(team.getTeamName());
+                System.out.println("Counters");
+                for(int counter:team.getListOfcounter()){
+                  System.out.println(counter);
+                 }
+              System.out.printf("%n Total Experience players: %d %n",team.getListOfcounter().get(0));
+              System.out.printf("%n Total Inexperience players: %d %n%n",team.getListOfcounter().get(1));
+              //theTeam.getListOfcounter().clear();
+             }
+           }else{
+            System.out.printf("%n You must add players to %s team", theTeam.getTeamName());
+           }
+      }else{
+        System.out.println("You must add team(s) first");
+      }
   }
   
   
@@ -284,6 +336,12 @@ public class MenuItems{
                     break;
         case "4":  try{
                     printPlayers();
+                   }catch(IOException e){
+                    e.printStackTrace();
+                   }
+                    break;
+       case "5":  try{
+                    leagueBalanceReport();
                    }catch(IOException e){
                     e.printStackTrace();
                    }

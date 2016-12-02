@@ -9,12 +9,14 @@ public class Player implements Comparable<Player>, Serializable {
   private String lastName;
   private int heightInInches;
   private boolean previousExperience;
+  
 
   public Player(String firstName, String lastName, int heightInInches, boolean previousExperience) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.heightInInches = heightInInches;
     this.previousExperience = previousExperience;
+   
   }
 
   public String getFirstName() {
@@ -32,6 +34,7 @@ public class Player implements Comparable<Player>, Serializable {
   public boolean isPreviousExperience() {
     return previousExperience;
   }
+  
 
   @Override
   public int compareTo(Player other) {
