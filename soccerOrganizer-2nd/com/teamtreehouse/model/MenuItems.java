@@ -23,6 +23,7 @@ public class MenuItems{
   private String  mOption3="Remove players from team";
   private String  mOption4="Show List of Players";
   private String  mOption5="League Balance Report";
+  private String  mOption6="Show team heigh's relation";
   Map<Integer,String> mMenuItemsList;
   private BufferedReader mReader;
   private Set<Team> mTeam;
@@ -32,6 +33,7 @@ public class MenuItems{
   List <Integer>listExperiencePlayers;
   Map<String,List<Integer>> listExperienceByTeams;
   List <Integer> listCounters;
+  Set<Integer>mListByHeigh;
   public static final int MAX_PLAYERS = 11;
   
   
@@ -42,6 +44,7 @@ public class MenuItems{
      mMenuItemsList.put(3,mOption3);
      mMenuItemsList.put(4,mOption4);
      mMenuItemsList.put(5,mOption5);
+     mMenuItemsList.put(6,mOption6);
      mReader=new BufferedReader(new InputStreamReader(System.in));
      mTeamList=new HashMap<>();
      mListPlayer=new HashMap<>();
@@ -49,6 +52,7 @@ public class MenuItems{
      listExperiencePlayers=new ArrayList<>();
      listExperienceByTeams=new HashMap<>();
      listCounters= new ArrayList<>();
+     mListByHeigh=new TreeSet<>();
   }
   
   
@@ -189,7 +193,7 @@ public class MenuItems{
       System.out.println("Please, add players to team typing the number associated with the player. Maximum 11 players/team");
       System.out.println("list size: " + mListPlayer.size());
         for(int number: mListPlayer.keySet()){
-        System.out.printf(" %d. %s, %s heightInInches: %d %n",number,   mListPlayer.get(number).getLastName(),mListPlayer.get(number).getFirstName(),mListPlayer.get(number).getHeightInInches());
+        System.out.printf(" %d. %s, %s | height(Inches): %d |previous Experience?: %b %n",number,   mListPlayer.get(number).getLastName(),mListPlayer.get(number).getFirstName(),mListPlayer.get(number).getHeightInInches(),mListPlayer.get(number).isPreviousExperience());
         
         }
       numberPlayer=catchUserInput();
@@ -273,8 +277,9 @@ public class MenuItems{
       System.out.println("You have to create teams first and add players.");
     }
     
-    
   }
+  
+  //Prints report of player's experience
   
   public void leagueBalanceReport() throws IOException{
     
@@ -299,9 +304,10 @@ public class MenuItems{
                 for(int counter:team.getListOfcounter()){
                   System.out.println(counter);
                  }
-              System.out.printf("%n Total Experience players: %d %n",team.getListOfcounter().get(0));
-              System.out.printf("%n Total Inexperience players: %d %n%n",team.getListOfcounter().get(1));
-              //theTeam.getListOfcounter().clear();
+              System.out.printf(team.getTeamName()+" team: ");
+              System.out.printf("Total Experience players: %d, ",team.getListOfcounter().get(0));
+              System.out.printf("Total Inexperience players: %d %n%n",team.getListOfcounter().get(1));
+              
              }
            }else{
             System.out.printf("%n You must add players to %s team", theTeam.getTeamName());
@@ -310,6 +316,36 @@ public class MenuItems{
         System.out.println("You must add team(s) first");
       }
   }
+  
+ 
+   public void showTeamByHeight() throws IOException{
+      int numberTeam=0;
+      if(mTeamList.size()>0){
+        do{
+           System.out.println("Select the number associated to the team in order to show list of player's heigh");
+            showListOfteams();
+            numberTeam= catchUserInput();
+            
+         }while(!mTeamList.containsKey(numberTeam));
+           Team theTeam= mTeamList.get(numberTeam);
+         if(theTeam.getPlayers().size()>0){
+           for(Player player : theTeam.getPlayers().values()){
+              mListByHeigh.add(player.getHeightInInches());
+           }
+           System.out.printf("%n Heigh's relation in %s team: %n",theTeam.getTeamName());
+           for(int height: mListByHeigh){
+              System.out.println(height + " Inches");
+           }
+           
+         }else{
+          System.out.println("You must add players to "+ theTeam.getTeamName()+" first.");
+         }
+           
+       }else{
+        System.out.println("You must add team(s) first");
+       }
+      
+   }
   
   
    public void switchUserInput(String userChoice){
@@ -346,6 +382,11 @@ public class MenuItems{
                     e.printStackTrace();
                    }
                     break;
+       case "6":  try{
+                    showTeamByHeight();
+                   }catch(IOException e){
+                    e.printStackTrace();
+                   }
         case "quit": System.out.println("Thanks for playing");
                      break;
         default: System.out.println("Incorrect answer");
