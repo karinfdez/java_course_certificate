@@ -64,9 +64,7 @@ public class MenuItems{
         System.out.println(item +"."+mMenuItemsList.get(item));
      }
     String userChoice=mReader.readLine();
-    
-    return userChoice.trim();
-    
+    return userChoice.trim();  
   }
                                                     
                                                     
@@ -179,8 +177,18 @@ public class MenuItems{
           }
      return numberTeam;
   }
-             
-   
+  
+  public void addExperiencePlayers(Team team, Player player){
+    
+        if(player.isPreviousExperience()){
+               team.addOneToExperienceCounter();
+         }else{
+               team.addOneToInexperienceCounter();  
+         }
+  
+  }
+  
+ 
   public void addPlayersToTeam(int numberTeam) throws IOException{
     
     String fullName="";
@@ -200,18 +208,17 @@ public class MenuItems{
      }while(!mListPlayer.containsKey(numberPlayer));
     
     //Verify that max of players on team are 11
-    
       isListOk=team.getPlayers().size()<MAX_PLAYERS;
        if(isListOk){
         Player player=mListPlayer.get(numberPlayer);
         team.addPlayer(player);
+         //Once player is added to team, is removed at the same time from player's list
+         if (team.getPlayers().containsValue(player)){
+           mListPlayer.remove(numberPlayer);
+         }
         System.out.printf("Added %d player(s) to %s %n",team.getPlayers().size(),team.getTeamName());
          
-        if(player.isPreviousExperience()){
-               team.addOneToExperienceCounter();
-          }else{
-               team.addOneToInexperienceCounter();  
-          }
+        addExperiencePlayers(team,player);
          
        }else{
         System.out.printf("There are already %d players on the team %n",team.getPlayers().size());
@@ -240,8 +247,15 @@ public class MenuItems{
          }
           numberTeam=catchUserInput();
           if(theTeam.getPlayers().containsKey(numberTeam)){
+            Player player=theTeam.getPlayers().get(numberTeam);
+            if (player.isPreviousExperience()){
+              theTeam.lessOneToExperienceCounter();
+            }else{
+              theTeam.lessOneToInexperienceCounter();
+            }
             theTeam.getPlayers().remove(numberTeam);
-            System.out.printf("%n %d players left on %s %n",theTeam.getPlayers().size(),theTeam.getTeamName());
+            
+            System.out.printf("%n %d player(s) left on %s %n",theTeam.getPlayers().size(),theTeam.getTeamName());
           }
         }else{
          System.out.printf("You have to add players to this team.%n%n"); 
@@ -317,7 +331,7 @@ public class MenuItems{
       }
   }
   
- 
+ //Group team by heigh, counting how many players per heigh
    public void showTeamByHeight() throws IOException{
       int numberTeam=0;
       if(mTeamList.size()>0){
@@ -346,6 +360,7 @@ public class MenuItems{
        }
       
    }
+ 
   
   
    public void switchUserInput(String userChoice){

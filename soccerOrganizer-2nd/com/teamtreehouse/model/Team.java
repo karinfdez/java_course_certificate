@@ -66,6 +66,14 @@ public class Team implements Comparable{
     inexperiencePlayers++;
   }
   
+  public void lessOneToExperienceCounter(){
+    experiencePlayers--;
+  }
+  
+   public void lessOneToInexperienceCounter(){
+    inexperiencePlayers--;
+  }
+  
   public void addCountersToList(){
     listExperiencePlayers.add(0,experiencePlayers);
     listExperiencePlayers.add(1,inexperiencePlayers);
