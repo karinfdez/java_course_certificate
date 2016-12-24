@@ -41,4 +41,14 @@ public class UserTest {
         assertEquals("Answer's reputation doesn't goes up by 10",10,bob.getReputation());
     }
 
+    @Test
+    public void acceptedAnswerGivesAnswererReputationPoints() throws Exception {
+        Question question = alice.askQuestion("What is a String?");
+        Answer bobAnswer=bob.answerQuestion(question,"A sequence of characters");
+        alice.acceptAnswer(bobAnswer);
+        assertEquals("Answer's reputation doesn't goes up by 15",15,bob.getReputation());
+    }
+
 }
+
+   // Write a test that proves that having an answer accepted gives the answerer a 15 point reputation boost
