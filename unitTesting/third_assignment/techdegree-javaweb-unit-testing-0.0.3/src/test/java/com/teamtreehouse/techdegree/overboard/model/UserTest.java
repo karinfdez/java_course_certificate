@@ -24,20 +24,7 @@ public class UserTest {
 
     }
 
-    @Test
-    public void askQuestion() throws Exception {
 
-    }
-
-    @Test
-    public void answerQuestion() throws Exception {
-
-    }
-
-    @Test
-    public void acceptAnswer() throws Exception {
-
-    }
 
     @Test
     public void reputationGoesUpIfQuestionUpvoted() throws Exception {
@@ -47,28 +34,11 @@ public class UserTest {
     }
 
     @Test
-    public void downVote() throws Exception {
-
-    }
-
-    @Test
-    public void getReputation() throws Exception {
-
-    }
-
-    @Test
-    public void getQuestions() throws Exception {
-
-    }
-
-    @Test
-    public void getAnswers() throws Exception {
-
-    }
-
-    @Test
-    public void getName() throws Exception {
-
+    public void reputationGoesUpIfAnswerUpvoted() throws Exception {
+        Question question = alice.askQuestion("What is a String?");
+        Post bobAnswer=bob.answerQuestion(question,"A sequence of characters");
+        alice.upVote(bobAnswer);
+        assertEquals("Answer's reputation doesn't goes up by 10",10,bob.getReputation());
     }
 
 }
