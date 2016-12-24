@@ -13,8 +13,9 @@ import static org.junit.Assert.*;
 public class UserTest {
     private User alice;
     private User bob;
-    //private User charles;
-
+    private Question question;
+    private Answer bobAnswer;
+    private Post bobPost;
 
     @Before
     public void setUp() throws Exception {
@@ -22,36 +23,32 @@ public class UserTest {
         Board board = new Board("Java");
         alice = board.createUser("alice");
         bob = board.createUser("bob");
-        //charles = board.createUser("charles");
+        question = alice.askQuestion("What is a String?");
+        bobAnswer=bob.answerQuestion(question,"A sequence of characters");
+        bobPost=bob.answerQuestion(question,"A sequence of characters");
 
     }
 
     @Test
     public void reputationGoesUpIfQuestionUpvoted() throws Exception {
-        Question question = alice.askQuestion("What is a String?");
         bob.upVote(question);
         assertEquals("Reputation doesn't goes up by 5",5,alice.getReputation());
     }
 
     @Test
     public void reputationGoesUpIfAnswerUpvoted() throws Exception {
-        Question question = alice.askQuestion("What is a String?");
-        Post bobAnswer=bob.answerQuestion(question,"A sequence of characters");
-        alice.upVote(bobAnswer);
+        alice.upVote(bobPost);
         assertEquals("Answer's reputation doesn't goes up by 10",10,bob.getReputation());
     }
 
     @Test
     public void acceptedAnswerGivesAnswererReputationPoints() throws Exception {
-        Question question = alice.askQuestion("What is a String?");
-        Answer bobAnswer=bob.answerQuestion(question,"A sequence of characters");
         alice.acceptAnswer(bobAnswer);
         assertEquals("Answer's reputation doesn't goes up by 15",15,bob.getReputation());
     }
+
     @Test(expected= VotingException.class)
     public void VotingMadeByAuthorThrowsException() throws Exception {
-        Question question = alice.askQuestion("What is a String?");
-        Post bobPost=bob.answerQuestion(question,"A sequence of characters");
         bob.upVote(bobPost);
         bob.downVote(bobPost);
         alice.upVote(question);
@@ -60,8 +57,6 @@ public class UserTest {
 
     @Test(expected= AnswerAcceptanceException.class)
     public void originalQuestionerCanAcceptAnswer() throws Exception {
-        Question question = alice.askQuestion("What is a String?");
-        Answer bobPost=bob.answerQuestion(question,"A sequence of characters");
-        bob.acceptAnswer(bobPost);
+        bob.acceptAnswer(bobAnswer);
     }
 }
