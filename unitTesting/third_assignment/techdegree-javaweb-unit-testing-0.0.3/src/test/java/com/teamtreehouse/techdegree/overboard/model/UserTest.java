@@ -1,5 +1,7 @@
 package com.teamtreehouse.techdegree.overboard.model;
 
+import com.teamtreehouse.techdegree.overboard.exc.AnswerAcceptanceException;
+import com.teamtreehouse.techdegree.overboard.exc.VotingException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +13,7 @@ import static org.junit.Assert.*;
 public class UserTest {
     private User alice;
     private User bob;
-    private User charles;
+    //private User charles;
 
 
     @Before
@@ -20,11 +22,9 @@ public class UserTest {
         Board board = new Board("Java");
         alice = board.createUser("alice");
         bob = board.createUser("bob");
-        charles = board.createUser("charles");
+        //charles = board.createUser("charles");
 
     }
-
-
 
     @Test
     public void reputationGoesUpIfQuestionUpvoted() throws Exception {
@@ -48,7 +48,20 @@ public class UserTest {
         alice.acceptAnswer(bobAnswer);
         assertEquals("Answer's reputation doesn't goes up by 15",15,bob.getReputation());
     }
+    @Test(expected= VotingException.class)
+    public void VotingMadeByAuthorThrowsException() throws Exception {
+        Question question = alice.askQuestion("What is a String?");
+        Post bobPost=bob.answerQuestion(question,"A sequence of characters");
+        bob.upVote(bobPost);
+        bob.downVote(bobPost);
+        alice.upVote(question);
+        alice.downVote(question);
+    }
 
+    @Test(expected= AnswerAcceptanceException.class)
+    public void originalQuestionerCanAcceptAnswer() throws Exception {
+        Question question = alice.askQuestion("What is a String?");
+        Answer bobPost=bob.answerQuestion(question,"A sequence of characters");
+        bob.acceptAnswer(bobPost);
+    }
 }
-
-   // Write a test that proves that having an answer accepted gives the answerer a 15 point reputation boost
