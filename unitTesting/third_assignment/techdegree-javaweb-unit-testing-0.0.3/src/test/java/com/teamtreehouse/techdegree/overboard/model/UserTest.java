@@ -35,7 +35,9 @@ public class UserTest {
     @Test
 
     public void reputationGoesUpIfQuestionUpvoted() throws Exception {
+
         bob.upVote(question);
+
         assertEquals("Reputation doesn't goes up by 5",5,alice.getReputation());
     }
 
@@ -43,7 +45,9 @@ public class UserTest {
 
     @Test
     public void reputationGoesUpIfAnswerUpvoted() throws Exception {
+
         alice.upVote(bobPost);
+
         assertEquals("Answer's reputation doesn't goes up by 10",10,bob.getReputation());
     }
 
@@ -51,7 +55,9 @@ public class UserTest {
 
     @Test
     public void acceptedAnswerGivesAnswererReputationPoints() throws Exception {
+
         alice.acceptAnswer(bobAnswer);
+
         assertEquals("Answer's reputation doesn't goes up by 15",15,bob.getReputation());
     }
 
@@ -60,6 +66,7 @@ public class UserTest {
 
     @Test(expected= VotingException.class)
     public void VotingMadeByAuthorThrowsException() throws Exception {
+
         bob.upVote(bobPost);
         bob.downVote(bobPost);
         alice.upVote(question);
@@ -71,6 +78,7 @@ public class UserTest {
 
     @Test(expected= AnswerAcceptanceException.class)
     public void originalQuestionerCanAcceptAnswer() throws Exception {
+
         bob.acceptAnswer(bobAnswer);
     }
 
@@ -79,8 +87,10 @@ public class UserTest {
 
     @Test
     public void downVotingQuestionsGetNoPoints() throws Exception {
+
         bob.upVote(question);
         charlie.downVote(question);
+
         assertEquals(5,alice.getReputation());
     }
 }
